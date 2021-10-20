@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  tomcat:
+    build:
+      context: .
+      dockerfile: Dockerfile-1
+    container_name: tomcat-1
+    ports:
+      - '9090:9090'
+      - '45564:45564'
+      - '45564:45564/udp'
+      - '4000:4000'
+      - '4000:4000/udp'
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.55            
+    volumes:
+      - tomcat-webapps-1:/usr/local/tomcat/webapps
+      - gitbucket-nfs-home:/usr/local/gitbucket 
+    environment:
+      GITBUCKET_HOME: /usr/local/gitbucket
+      ReadWritePaths: /usr/local/gitbucket
+
+volumes:
+  tomcat-webapps-1:
+  gitbucket-nfs-home:
+      driver: local
+      driver_opts:
+        type: none
+        o: bind
+        device: /data
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1

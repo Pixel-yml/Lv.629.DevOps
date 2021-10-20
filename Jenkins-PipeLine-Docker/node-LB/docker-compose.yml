@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  httpd-lb-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: httpd-lb-1      
+    ports:
+      - '80:80'      
+    volumes:
+      - apache-home-1:/usr/local/apache2
+volumes:
+  apache-home-1:      
