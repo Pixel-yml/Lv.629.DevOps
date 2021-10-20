@@ -1,0 +1,33 @@
+---
+- include_vars: db-secrets.yml
+
+- name: Deploying GitBucket App
+  copy:
+    src: gitbucket.war
+    dest: "{{ tomcat_setup_folder }}/webapps/gitbucket.war"
+    owner: tomcat
+    group: tomcat
+    mode: '0777'
+- pause: minutes=1
+
+- name: Connect GitBucket to DB
+  template:
+    src: database.conf.j2
+    dest: "{{ gitbucker_install_folder }}/database.conf"
+    owner: tomcat
+    group: tomcat
+  notify: restart tomcat 
+  
+- name: Make GitBucker <distributable>
+  template:
+    src: web.xml.j2
+    dest: "{{ tomcat_setup_folder }}/webapps/gitbucket/WEB-INF/web.xml"
+    owner: tomcat
+    group: tomcat
+  notify: restart tomcat
+
+- name: Start tomcat Using XML Config File
+  copy:
+    src: gitbucket.xml
+    dest: "{{ tomcat_setup_folder }}/conf/Catalina/localhost/gitbucket.xml"
+    mode: '0777'

@@ -1,0 +1,7 @@
+---
+# vars file for setup-nfs
+
+nfs_home_folder: /mnt/sda3/NFS
+tomcat_node1_adress: 10.26.0.237
+tomcat_node2_adress: 10.26.0.159
+nfs_node1_adress: 10.26.0.250

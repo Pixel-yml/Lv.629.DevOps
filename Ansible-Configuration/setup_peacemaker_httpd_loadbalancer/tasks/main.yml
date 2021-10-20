@@ -1,0 +1,91 @@
+---
+# tasks file for setup_peacemaker_httpd_loadbalancer
+    - include_vars: cluster-secrets.yml
+    - name: Install Apache, nano
+      yum:
+        name:
+          - httpd
+          - nano
+          - wget
+          - unzip
+        state: latest
+
+    - name: Copy hosts file
+      template:
+        src: hosts.j2
+        dest: "/etc/hosts"
+    
+    - name: Copy httpd config file, enable LOAD BALANCER
+      template:
+        src: httpd.conf.j2
+        dest: "/etc/httpd/conf/httpd.conf"
+      notify: restart httpd
+
+    - name: Config Firewalld
+      service:
+        name: firewalld
+        state: stopped
+        enabled: no
+      when: ansible_service_mgr == "systemd"
+
+    - name: Config SELinux
+      selinux: state=disabled
+            
+    - name: Reboot host and wait for it to restart
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: whoami
+        
+    - name: Install Pacemaker packages
+      yum:
+        name: ['pacemaker', 'pcs', 'fence-agents-common']
+        enablerepo: ha
+        state: present
+
+    - name: Set hacluster user password
+      user:
+        name: hacluster
+        password: "{{ HACLUSTER_PASSWORD|password_hash('sha512') }}"
+
+    - name: Enable pcsd service
+      service:
+        name: pcsd.service
+        state: started
+        enabled: yes
+
+    - name: Cluster authentication
+      command: >
+        pcs host auth {{ lb_node1_hostanme }} {{ lb_node2_hostanme}}
+        -u hacluster -p {{ HACLUSTER_PASSWORD }}
+
+    - name: Cluster setup
+      command: >
+        pcs cluster setup {{ CLUSTER_NAME }} {{ lb_node1_hostanme }} {{ lb_node2_hostanme }}
+
+    - name: Cluster start
+      command: >
+        pcs cluster start --all   
+
+    - name: Cluster enable
+      command: >
+        pcs cluster enable --all
+    
+    - name: Disable stonith
+      command: >
+        pcs property set stonith-enabled=false
+    
+    - name: Ignore quorum
+      command: >
+        pcs property set no-quorum-policy=ignore    
+
+    - name: Define floating IP
+      shell: pcs resource create httpd_vip IPaddr2 ip={{ VIP }} cidr_netmask=24 --group apache
+      run_once: true
+
+    - name: Add resource for server status checking
+      shell: pcs resource create WebServer ocf:heartbeat:apache configfile=/etc/httpd/conf/httpd.conf statusurl="http://127.0.0.1/server-status" op monitor interval=20s
+      run_once: true      

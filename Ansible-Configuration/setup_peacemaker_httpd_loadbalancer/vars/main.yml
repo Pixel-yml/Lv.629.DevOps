@@ -1,0 +1,16 @@
+---
+# vars file for setup_peacemaker_httpd_loadbalancer
+
+tomcat_node1_ip: 10.26.0.237
+tomcat_node2_ip: 10.26.0.159
+
+lb_node1_ip: 10.26.0.194
+lb_node2_ip: 10.26.0.243
+ 
+tomcat_node1_hostname: a.tmc1
+tomcat_node2_hostname: a.tmc2
+
+lb_node1_hostanme: a.lb1
+lb_node2_hostanme: a.lb2
+
+VIP: 10.26.0.179

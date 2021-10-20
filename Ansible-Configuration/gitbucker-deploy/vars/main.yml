@@ -1,0 +1,3 @@
+---
+tomcat_setup_folder: /mnt/sda3/tomcat
+gitbucker_install_folder: /mnt/sda3/NFS/gitbucket

@@ -1,0 +1,54 @@
+---
+- name: Manage Volumes
+  hosts: all_servers       
+  become: yes              
+  become_method: sudo       
+  remote_user: root
+  
+  roles:
+  - manage-volumes
+
+- name: Setup NFS Server
+  hosts: nfs_servers       
+  become: yes              
+  become_method: sudo       
+  remote_user: root
+  
+  roles:
+  - setup-nfs-server
+
+- name: Setup NFS Clients
+  hosts: tomcat_servers       
+  become: yes              
+  become_method: sudo       
+  remote_user: root
+  
+  roles:
+  - setup-nfs-clients
+
+- name: Istall Tomcat
+  hosts: tomcat_servers      
+  become: yes               
+  become_method: sudo       
+  remote_user: root     
+    
+  roles:
+    - tomcat
+
+- name: Deploy GitBucket
+  hosts: tomcat_servers      
+  become: yes               
+  become_method: sudo       
+  remote_user: root     
+    
+  roles:
+    - gitbucker-deploy    
+
+- name: Deploy apache and configure peacemaker httpd loadbalancer
+  hosts: lb_servers      
+  become: yes               
+  become_method: sudo       
+  remote_user: root
+
+  roles:
+    - setup_peacemaker_httpd_loadbalancer

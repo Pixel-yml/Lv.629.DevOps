@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context displayName="gitbucket"
+         override="true"
+         path="/gitbucket"
+         docBase="${catalina.base}/webapps/gitbucket">
+</Context>

@@ -1,0 +1,4 @@
+# /etc/exports: the access control list for filesystems which may be exported
+#   to NFS clients.  See exports(5).
+/mnt/sda3/NFS {{ tomcat_node1_adress }}/24(rw,sync,no_root_squash,anonuid=1000,anongid=1000)
+/mnt/sda3/NFS {{ tomcat_node2_adress }}/24(rw,sync,no_root_squash,anonuid=1000,anongid=1000)

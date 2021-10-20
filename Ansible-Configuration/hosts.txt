@@ -1,0 +1,19 @@
+[tomcat_servers]
+a.tmc1 ansible_host=10.26.0.237 new_hostname=a.tmc1 new_server_port=8082
+a.tmc2 ansible_host=10.26.0.159 new_hostname=a.tmc2 new_server_port=8083
+
+[nfs_servers]
+a.nfs ansible_host=10.26.0.250 new_hostname=a.nfs
+
+[lb_servers]
+a.lb1 ansible_host=10.26.0.194 new_hostname=a.lb1
+a.lb2 ansible_host=10.26.0.243 new_hostname=a.lb2
+
+[all_servers:children]
+tomcat_servers
+lb_servers
+nfs_servers
+
+[tmc_and_nfs:children]
+tomcat_servers
+nfs_servers

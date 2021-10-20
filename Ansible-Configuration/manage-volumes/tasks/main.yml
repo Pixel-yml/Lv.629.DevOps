@@ -1,0 +1,36 @@
+---
+# tasks file for manage-volumes
+
+  - name: Partition New Disk
+    shell: echo -e "n\np\n3\n\n\nw" | sudo fdisk /dev/sda
+    args:
+      executable: /bin/bash
+
+  - name: Change Partition
+    shell: echo -e "t\2\8e\w" | sudo fdisk /dev/sda
+    args:
+      executable: /bin/bash
+
+  - name: Locate partition
+    shell: partx -u /dev/sda3
+    args:
+      executable: /bin/bash
+
+  - name: Configure partition
+    shell:  mkfs.ext4 -L DATA1 /dev/sda3
+    args:
+      executable: /bin/bash
+
+  - name: Create a partition directory
+    file:
+      path: "{{ mount_folder }}"
+      state: directory
+      owner: root
+      group: root   
+
+  - name: Mount Partition
+    mount:
+     fstype: ext4
+     src: /dev/sda3
+     path: "{{ mount_folder }}"
+     state: mounted

@@ -1,0 +1,3 @@
+---
+# vars file for manage-volumes
+mount_folder: /mnt/sda3

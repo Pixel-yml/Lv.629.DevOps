@@ -1,0 +1,7 @@
+---
+# handlers file for setup_peacemaker_httpd_loadbalancer
+
+- name: restart httpd
+  service:
+    name: httpd
+    state: restarted
