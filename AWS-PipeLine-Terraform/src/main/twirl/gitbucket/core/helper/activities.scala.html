@@ -1,0 +1,87 @@
+@(activities: List[gitbucket.core.model.Activity])(implicit context: gitbucket.core.controller.Context)
+@import gitbucket.core.view.helpers
+
+@if(activities.isEmpty){
+  No activity
+} else {
+  @activities.map { activity =>
+    <div class="block">
+      @(activity.activityType match {
+        case "open_issue"          => simpleActivity(activity)
+        case "comment_issue"       => simpleActivity(activity)
+        case "comment_commit"      => simpleActivity(activity)
+        case "close_issue"         => simpleActivity(activity)
+        case "reopen_issue"        => simpleActivity(activity)
+        case "open_pullreq"        => simpleActivity(activity)
+        case "merge_pullreq"       => simpleActivity(activity)
+        case "release"             => simpleActivity(activity)
+        case "create_repository"   => simpleActivity(activity)
+        case "delete_repository"   => simpleActivity(activity)
+        case "rename_repository"   => simpleActivity(activity)
+        case "transfer_repository" => simpleActivity(activity)
+        case "create_branch"       => simpleActivity(activity)
+        case "delete_branch"       => simpleActivity(activity)
+        case "create_tag"          => simpleActivity(activity)
+        case "delete_tag"          => simpleActivity(activity)
+        case "fork"                => simpleActivity(activity)
+        case "push"  => customActivity(activity){
+          <div class="small activity-message">
+            {activity.additionalInfo.get.split("\n").reverse.take(4).zipWithIndex.map{ case (commit, i) =>
+              if(i == 3){
+                <div>...</div>
+              } else {
+                if(commit.nonEmpty){
+                  <div>
+                     <a href={s"${context.path}/${activity.userName}/${activity.repositoryName}/commit/${commit. substring(0, 40)}"} class="monospace">{commit.substring(0, 7)}</a>
+                     <span>{commit.substring(41)}</span>
+                  </div>
+                }
+              }
+            }}
+          </div>
+        }
+        case "create_wiki" => customActivity(activity){
+          <div class="small activity-message">
+            Created <a href={s"${context.path}/${activity.userName}/${activity.repositoryName}/wiki/${activity.additionalInfo.get}"}>{activity.additionalInfo.get}</a>.
+          </div>
+        }
+        case "edit_wiki" => customActivity(activity){
+          activity.additionalInfo.get.split(":") match {
+            case Array(pageName, commitId) =>
+              <div class="small activity-message">
+                Edited <a href={s"${context.path}/${activity.userName}/${activity.repositoryName}/wiki/${pageName}"}>{pageName}</a>.
+                <a href={s"${context.path}/${activity.userName}/${activity.repositoryName}/wiki/${pageName}/_compare/${commitId.substring(0, 7)}^...${commitId.substring(0, 7)}"}>View the diff »</a>
+              </div>
+            case Array(pageName) =>
+              <div class="small activity-message">
+                Edited <a href={s"${context.path}/${activity.userName}/${activity.repositoryName}/wiki/${pageName}"}>{pageName}</a>.
+              </div>
+          }
+        }
+        case "delete_wiki" => simpleActivity(activity)
+      })
+    </div>
+  }
+}
+
+@customActivity(activity: gitbucket.core.model.Activity)(additionalInfo: Any) = {
+  <div>
+    <div class="muted small">@gitbucket.core.helper.html.datetimeago(activity.activityDate)</div>
+    <div class="strong">
+      @helpers.avatarLink(activity.activityUserName, 16)
+      @helpers.activityMessage(activity.message)
+    </div>
+    @additionalInfo
+  </div>
+}
+
+@simpleActivity(activity: gitbucket.core.model.Activity) = {
+  <div>
+    <span class="muted small">@gitbucket.core.helper.html.datetimeago(activity.activityDate)</span>
+    <div>
+      @helpers.avatarLink(activity.activityUserName, 16)
+      @helpers.activityMessage(activity.message)
+    </div>
+  </div>
+}
+

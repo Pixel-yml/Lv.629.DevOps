@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+    - sbt executable
+  post_build:
+    commands:
+    - mv "$(pwd)"/target/executable/gitbucket.war "$(pwd)"/ROOT.war
+artifacts:
+    files:
+    - ROOT.war
+    name: artifact
