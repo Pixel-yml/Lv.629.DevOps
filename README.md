@@ -2,7 +2,7 @@
 Lv.629.DevOps SoftServe Intership Projects
 
 ## Demo №1
-Created High Availability GitBucket cluster using Ansible roles, which consisted of:
+Created High Availability GitBucket app cluster using Ansible roles, which consisted of:
 - Tomcat cluster that work with Session Replication, connected  NFS server and MySQL Server;
 - Apache Load Balancer cluster with configured pacemaker cluster, proxy_module and sticky sessions;
 - Virtual IP as a pacemaker cluster resource;
@@ -11,6 +11,9 @@ Created High Availability GitBucket cluster using Ansible roles, which consisted
     - Node Exporter
     - Loki
     - Promtail
+<p align="center">
+<img src="https://github.com/Pixel-yml/Lv.629.DevOps/raw/master/Screenshots/HA-tomcat.png" alt="HA-tomcat" style="width: 50%; max-width: 20%; height: auto;">
+</p>
 
 ## Demo №2
 #### Task - 1
@@ -22,8 +25,9 @@ Created a Jenkins PipeLine that automatically deploy and install dockerized appl
 
 Jenkins master and jenkins worker which are set up to work as follows:
 Jenkins use Poll SCM trigger to monitor changes in GitHub repository, when such a change occurs, jenkins begins downloading source files to its local repository, after that, using the publish over ssh jenkins plugin files are transferred to the appropriate servers and the `docker-compose up -d` command is run using a script.
-
-
+<p align="center">
+<img src="https://github.com/Pixel-yml/Lv.629.DevOps/raw/master/Screenshots/Jenkins-PipeLine.png" alt="Jenkins-PipeLine" style="width: 60%; max-width: 20%; height: auto;">
+</p>
 
 #### Task - 2
 Build a pipeline for the GitBucket tomcat application, using Amazon Web services. 
@@ -38,3 +42,6 @@ To do this, I used the following amazon resources:
 Also used Terraform to set up AWS Infrastructures.
 Configure Terraform Cloud to work with 
 GitHub Actions to automate deployments.
+<p align="center">
+<img src="https://github.com/Pixel-yml/Lv.629.DevOps/blob/master/Screenshots/AWS-PipeLine.png" alt="AWS-PipeLine" style="width: 60%; max-width: 20%; height: auto;">
+</p>
